@@ -1,0 +1,3 @@
+S->aAbCc#
+A->aAb|#
+C->Cc|#
