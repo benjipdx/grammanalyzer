@@ -52,10 +52,17 @@ class Grammanalyzer():
   def input_test_string(self, teststring):
     self.buffer = teststring
  
-  def get_buff(self):
+  def pop_buff(self):
     try:
       nextchar = self.buffer[0]
       self.buffer = self.buffer[1:] #remove first charA
+      return nextchar
+    except IndexError:
+      return None
+
+  def peek_buff(self):
+    try:
+      nextchar = self.buffer[0]
       return nextchar
     except IndexError:
       return None
@@ -69,7 +76,7 @@ class Grammanalyzer():
       #need to find the right rule
       result = None
       for j in i:
-        print(j,i)
+        #print(j,i)
         if(j[0] == character):
           result = j
           return result
@@ -87,50 +94,56 @@ class Grammanalyzer():
 
     done = False
     while(not done):
+      #run the simulator
+
       print("before", self.buffer, self.stack.string)
       #import pdb;pdb.set_trace()
-      buffchar = self.get_buff()
-      popped = self.stack.pop() #not getting anything, getting none
-      print("after", self.buffer,buffchar,popped,self.stack.string)
+
+      buffpeek = self.peek_buff()
+      stackpeek = self.stack.peek() #not getting anything, getting none
+
+      print("after", self.buffer,buffpeek,stackpeek,self.stack.string)
+
       #    1. Pop an element from the stack.
 
-      if(not popped and buffchar):
+      if(not stackpeek and buffpeek):
         print "1"
-        #no more stack buf still have buffchars
+        #no more stack buf still have buffpeeks
         #    4. If the stack is empty and the input buffer is not, reject the string.
         done = True
         return 1 #reject
 
-      elif(not popped and not buffchar):
+      elif(not stackpeek and not buffpeek):
         print "2"
         done = True
         return 0
       #    5. If both the stack and the input buffer are empty, accept the string.
 
-      if((popped.islower() == False) or (popped == "#")):
+      elif((stackpeek.islower() == False) and stackpeek != '#'):
         print "3"
-      #    2. If the popped element is a variable, look at the next character in the input and use that to
+      #    2. If the stackpeek element is a variable, look at the next character in the input and use that to
       #    determine which rule to apply. Then push the right hand side of that rule onto the stack. If
       #    no rule matches the next input reject the string.
-        rule = self.get_rule(buffchar) #get next rule TODO this is broked
+        rule = self.get_rule(buffpeek) #get next rule TODO this is broked
         if(not rule):
           #no rule matches
           done = True
           return 1 #one for reject
-        elif(rule != "#"):
+        elif(rule[0] == buffpeek):
           #found a rule
+          self.stack.pop()
           self.stack.push(rule)
 
-      elif((popped.islower() == True) or popped == "#"):
+      elif((stackpeek.islower() == True) or stackpeek == "#"):
         print "4"
-      #    3. If the popped element is a terminal, make sure it matches the next character in the input and
+      #    3. If the stackpeek element is a terminal, make sure it matches the next character in the input and
       #    remove both. If it does not match reject the string.
-        if(popped == buffchar):
+        if(stackpeek == buffpeek):
           #remove both
-          #already popped, just need to remove buffchar, but it is as well
-          continue
-        
-        elif(popped != buffchar):
+          self.stack.pop()
+          self.pop_buff()
+
+        elif(stackpeek != buffpeek):
           done = True
           return 1 #reject string
 
