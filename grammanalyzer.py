@@ -39,7 +39,9 @@ class Grammanalyzer():
     file = open(filename,'rt')
     contents = file.read()
     contents = contents.rstrip('\n').split('\n')
+    print("Grammar %s is the following:" %filename)
     for i in contents:
+      print i
       #each i is the string of the whole line withot newlines
       line = i.split('->') #now we have separated by -> ['S','aSa|#']
       rules = line[1].split('|') #now we have rules ['aSa','#']
