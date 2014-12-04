@@ -1,0 +1,2 @@
+if you give the application a variable in the input string it infinite loops because it consistenly pushes and pops from teh stack indefinitely with teh variable provided, so dont do that:w
+

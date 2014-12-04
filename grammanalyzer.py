@@ -31,6 +31,7 @@ class Grammanalyzer():
     self.encoding = []
     self.stack = StringStack()
     self.buffer = ""
+    self.variables = []
     return
 
   def load_file(self, filename):
@@ -44,6 +45,12 @@ class Grammanalyzer():
       rules = line[1].split('|') #now we have rules ['aSa','#']
       final_line = [line[0]]+rules
       self.encoding+=[final_line]
+
+    #convert encoding variables into list
+    for i in self.encoding:
+      self.variables+=i[0]
+
+    print self.variables
 
   def tp(self): #testprint function
     print self.encoding
@@ -67,7 +74,14 @@ class Grammanalyzer():
     except IndexError:
       return None
 
-  def get_rule(self, character):
+#[['S', 'aAbCc#'], ['A', 'aAb', '#'], ['C', 'Cc', '#']] TODO fix this
+#>>> ('after', 'aa', 'a', 'A', '#cCbA')
+#print("after", self.buffer,buffpeek,stackpeek,self.stack.string)
+#need to pass in stackpeed and buffpeek to pick the right rule when presented with many, since the
+#stackpeek is going to tell us what rule to apply, and then from that we can take the buffpeek and get the right rule
+#for that variable
+  
+  def get_rule(self, buffchar, stackchar):
     """takes terminal as input and finds matching rule for it"""
     #self.encoding is a list of lists
     for i in self.encoding:
@@ -75,11 +89,15 @@ class Grammanalyzer():
       #i is a list of each line of file
       #need to find the right rule
       result = None
-      for j in i:
-        #print(j,i)
-        if(j[0] == character):
-          result = j
-          return result
+      if(i[0] == stackchar):
+        for j in i:
+          print("fuck",j,i)
+          if(j[0] == buffchar):
+            result = j
+            return result
+      else:
+        continue #loop until we can't loop no more!
+
       return result #catching case if we dont find anything
 
 
@@ -103,6 +121,7 @@ class Grammanalyzer():
       stackpeek = self.stack.peek() #not getting anything, getting none
 
       print("after", self.buffer,buffpeek,stackpeek,self.stack.string)
+      #take buffpeek, look in stackpeek
 
       #    1. Pop an element from the stack.
 
@@ -119,12 +138,13 @@ class Grammanalyzer():
         return 0
       #    5. If both the stack and the input buffer are empty, accept the string.
 
-      elif((stackpeek.islower() == False) and stackpeek != '#'):
+      elif(stackpeek in self.variables): #is a variable we just saw
+      #elif((stackpeek.islower() == False) and stackpeek != '#'):
         print "3"
       #    2. If the stackpeek element is a variable, look at the next character in the input and use that to
       #    determine which rule to apply. Then push the right hand side of that rule onto the stack. If
       #    no rule matches the next input reject the string.
-        rule = self.get_rule(buffpeek) #get next rule TODO this is broked
+        rule = self.get_rule(buffpeek,stackpeek) #get next rule
         if(not rule):
           #no rule matches
           done = True
@@ -134,7 +154,8 @@ class Grammanalyzer():
           self.stack.pop()
           self.stack.push(rule)
 
-      elif((stackpeek.islower() == True) or stackpeek == "#"):
+      elif(stackpeek not in self.variables): #is a terminal
+      #elif((stackpeek.islower() == True) or stackpeek == "#"):
         print "4"
       #    3. If the stackpeek element is a terminal, make sure it matches the next character in the input and
       #    remove both. If it does not match reject the string.
@@ -146,7 +167,6 @@ class Grammanalyzer():
         elif(stackpeek != buffpeek):
           done = True
           return 1 #reject string
-
 
 def main():
   #usage: ./grammanalyzer.py templates/3.txt abababa
