@@ -50,12 +50,6 @@ class Grammanalyzer():
     for i in self.encoding:
       self.variables+=i[0]
 
-    print self.variables
-
-  def tp(self): #testprint function
-    print self.encoding
-    print self.buffer
-
   def input_test_string(self, teststring):
     self.buffer = teststring
  
@@ -74,6 +68,7 @@ class Grammanalyzer():
     except IndexError:
       return None
 
+#notes:
 #[['S', 'aAbCc#'], ['A', 'aAb', '#'], ['C', 'Cc', '#']] TODO fix this
 #>>> ('after', 'aa', 'a', 'A', '#cCbA')
 #print("after", self.buffer,buffpeek,stackpeek,self.stack.string)
@@ -91,7 +86,6 @@ class Grammanalyzer():
       result = None
       if(i[0] == stackchar):
         for j in i:
-          print("fuck",j,i)
           if(j[0] == buffchar):
             result = j
             return result
@@ -114,33 +108,23 @@ class Grammanalyzer():
     while(not done):
       #run the simulator
 
-      print("before", self.buffer, self.stack.string)
-      #import pdb;pdb.set_trace()
-
       buffpeek = self.peek_buff()
       stackpeek = self.stack.peek() #not getting anything, getting none
-
-      print("after", self.buffer,buffpeek,stackpeek,self.stack.string)
-      #take buffpeek, look in stackpeek
 
       #    1. Pop an element from the stack.
 
       if(not stackpeek and buffpeek):
-        print "1"
         #no more stack buf still have buffpeeks
         #    4. If the stack is empty and the input buffer is not, reject the string.
         done = True
         return 1 #reject
 
       elif(not stackpeek and not buffpeek):
-        print "2"
         done = True
         return 0
       #    5. If both the stack and the input buffer are empty, accept the string.
 
       elif(stackpeek in self.variables): #is a variable we just saw
-      #elif((stackpeek.islower() == False) and stackpeek != '#'):
-        print "3"
       #    2. If the stackpeek element is a variable, look at the next character in the input and use that to
       #    determine which rule to apply. Then push the right hand side of that rule onto the stack. If
       #    no rule matches the next input reject the string.
@@ -155,8 +139,6 @@ class Grammanalyzer():
           self.stack.push(rule)
 
       elif(stackpeek not in self.variables): #is a terminal
-      #elif((stackpeek.islower() == True) or stackpeek == "#"):
-        print "4"
       #    3. If the stackpeek element is a terminal, make sure it matches the next character in the input and
       #    remove both. If it does not match reject the string.
         if(stackpeek == buffpeek):
@@ -168,12 +150,19 @@ class Grammanalyzer():
           done = True
           return 1 #reject string
 
+def usage():
+  print "usage: ./grammanalyzer.py templates/3.txt abababa"
+  sys.exit()
+
 def main():
-  #usage: ./grammanalyzer.py templates/3.txt abababa
+  filename = sys.argv[1]
+  test_string = sys.argv[2]
+  if(not filename or not test_string):
+    usage()
+
   an = Grammanalyzer()
-  an.load_file(sys.argv[1])
-  an.tp()
-  input=str(sys.argv[2])
+  an.load_file(filename)
+  input=str(test_string)
   an.input_test_string(input)
   returned = an.sim()
   if(returned == 0):
