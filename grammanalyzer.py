@@ -41,6 +41,8 @@ class Grammanalyzer():
     contents = contents.rstrip('\n').split('\n')
     print("Grammar %s is the following:" %filename)
     for i in contents:
+      if(i[0] == '#'):
+        continue
       print i
       #each i is the string of the whole line withot newlines
       line = i.split('->') #now we have separated by -> ['S','aSa|#']
@@ -157,9 +159,11 @@ def usage():
   sys.exit()
 
 def main():
-  filename = sys.argv[1]
-  test_string = sys.argv[2]
-  if(not filename or not test_string):
+  try:
+    filename = sys.argv[1]
+    test_string = sys.argv[2]
+  except IndexError:
+    #need to learn how to use program:
     usage()
 
   an = Grammanalyzer()
@@ -168,9 +172,9 @@ def main():
   an.input_test_string(input)
   returned = an.sim()
   if(returned == 0):
-    print("String %s in Grammar" % input)
+    print("String %s in grammar\n" % input)
   else:
-    print("String %s is NOT in Grammar" % input)
+    print("String %s is NOT in grammar\n" % input)
     return 1
   
 

@@ -1,4 +1,2 @@
-#either all a's or all b's, not finite so context free so yeah
-S->
-A->aAb|#
-C->Cc|#
+#all a's or all b's
+
