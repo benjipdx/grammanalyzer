@@ -172,9 +172,9 @@ def main():
   an.input_test_string(input)
   returned = an.sim()
   if(returned == 0):
-    print("String %s in grammar\n" % input)
+    print("String %s in language\n" % input)
   else:
-    print("String %s is NOT in grammar\n" % input)
+    print("String %s is NOT in language\n" % input)
     return 1
   
 
