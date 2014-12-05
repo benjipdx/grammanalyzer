@@ -108,12 +108,12 @@ class Grammanalyzer():
     #push start variable onto stack
     self.stack.push(self.encoding[0][0]) 
 
-    done = False
+    done = False #we're not done
     while(not done):
       #run the simulator
 
-      buffpeek = self.peek_buff()
-      stackpeek = self.stack.peek() #not getting anything, getting none
+      buffpeek = self.peek_buff() #peek at next in buffer
+      stackpeek = self.stack.peek() #peek at next thing in the stack
 
       #    1. Pop an element from the stack.
 
@@ -173,6 +173,7 @@ def main():
   returned = an.sim()
   if(returned == 0):
     print("String %s in language\n" % input)
+    return 0
   else:
     print("String %s is NOT in language\n" % input)
     return 1

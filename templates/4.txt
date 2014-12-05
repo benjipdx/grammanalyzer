@@ -1,2 +1,2 @@
-#w | w is either 0 or an the same number of 1's on either side of a 0
+#{w | w is either 0 or an the same number of 1's on either side of a 0}
 S->1S1|0
